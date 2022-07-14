@@ -2,7 +2,7 @@
   <div class="todo-container">
     <input class="control" type="text" v-model="todoText" @keypress.enter="addTodo" />
     <p class="length">We have {{todos.length}} Todos</p>
-    <todo-list-vue :todos="todos"/>
+    <todo-list-vue @edit-click="editTodo" @delete-click="deleteTodo" :todos="todos"/>
   </div>
 </template>
 <script>
@@ -16,17 +16,41 @@ export default {
   data() {
     return {
       todoText: "",
-      todos: []
+      todos: [],
+      todoToBeEdited: {},
+      indexToBeEdited: -1,
+      isEditMode: false
     };
   },
   methods: {
     addTodo() {
+      if (this.isEditMode) {
+        this.todoToBeEdited.message = this.todoText
+        this.todos.splice(this.indexToBeEdited, 1, this.todoToBeEdited)
+        this.todoToBeEdited = {}
+        this.indexToBeEdited = -1
+        this.isEditMode = false
+        this.todoText = ""
+        return
+      }
       this.todos.push({
         id: Math.floor(Math.random() * 10000) + 1,
         message: this.todoText,
         isCompleted: false
       })
       this.todoText = ""
+    },
+    editTodo(index){
+      this.todoToBeEdited = this.todos[index]
+      this.indexToBeEdited = index
+      this.isEditMode = true
+      this.todoText = this.todoToBeEdited.message
+    },
+    deleteTodo (id) {
+      const indexOfItem = this.todos.findIndex(todo => todo.id === id) 
+      if (indexOfItem !== -1) {
+        this.todos.splice(indexOfItem, 1)
+      }
     },
     buttonClicked(data) {
       console.log("I have been clicked")

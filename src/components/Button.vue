@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         doSomething() {
-            this.$emit('clicked', {name: "Jaja", school: "UPH"})
+            this.$emit('clicked')
         }
     }
 }
@@ -39,6 +39,7 @@ export default {
         border: none;
         border-radius: 4px;
         color: #FFFFFF;
+        cursor: pointer;
         padding: 7px 20px;
     }
 </style>

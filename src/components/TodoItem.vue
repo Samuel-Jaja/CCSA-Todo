@@ -1,14 +1,14 @@
 <template>
     <div class="todo">
-        <input type="checkbox" v-model="todo.isCompleted" />
+        <input id="text" type="checkbox" v-model="todo.isCompleted" />
         <div class="text">
             <p :class="todo.isCompleted ? 'strikethrough':''">{{todo.message}}</p>
         </div>
-        <div class="edit">
-            <button-vue :style="'Success'" :value="'Edit'" />
+        <div v-show="!todo.isCompleted" class="edit">
+            <button-vue @clicked="$emit('edit-clicked')" :style="'Success'" :value="'Edit'" />
         </div>
         <div class="delete">
-            <button-vue :style="'Danger'" :value="'Delete'" />
+            <button-vue @clicked="$emit('delete-clicked')" :style="'Danger'" :value="'Delete'" />
         </div>
     </div>
 </template>
@@ -52,5 +52,8 @@ export default {
 
     .strikethrough {
         text-decoration: line-through;
+    }
+    input[type="checkbox"] {
+        cursor: pointer;
     }
 </style>
