@@ -5,16 +5,17 @@
             <p :class="todo.isCompleted ? 'strikethrough':''">{{todo.message}}</p>
         </div>
         <div v-show="!todo.isCompleted" class="edit">
-            <button-vue @clicked="$emit('edit-clicked')" :style="'Success'" :value="'Edit'" />
+            <button-vue @clicked="editClicked" :style="'Success'" :value="'Edit'" />
         </div>
         <div class="delete">
-            <button-vue @clicked="$emit('delete-clicked')" :style="'Danger'" :value="'Delete'" />
+            <button-vue @clicked="deleteTodo(todo.id)" :style="'Danger'" :value="'Delete'" />
         </div>
     </div>
 </template>
 
 <script>
 import ButtonVue from './Button.vue'
+import { mapMutations, mapState } from 'vuex'
 
 export default {
     components: {
@@ -27,6 +28,18 @@ export default {
                 message: 'Coding all day',
                 isCompleted: true
             }
+        }
+    },
+    methods: {
+        ...mapMutations([
+            'deleteTodo',
+            'changeIsEditStateTrue',
+            'setActiveTodo',
+        ]),
+        editClicked(){
+            this.$emit('edit-clicked', this.todo.message)
+            this.setActiveTodo(this.todo)
+            this.changeIsEditStateTrue()
         }
     }
 }

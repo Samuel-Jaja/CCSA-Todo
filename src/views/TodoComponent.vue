@@ -1,12 +1,13 @@
 <template>
   <div class="todo-container">
-    <input class="control" type="text" v-model="todoText" @keypress.enter="addTodo" />
+    <input class="control" type="text" v-model="todoText" @keypress.enter="addTodoMethod" />
     <p class="length">We have {{todos.length}} Todos</p>
-    <todo-list-vue @edit-click="editTodo" @delete-click="deleteTodo" :todos="todos"/>
+    <todo-list-vue @edit="setText" @delete-click="deleteTodo" :todos="todos"/>
   </div>
 </template>
 <script>
 import TodoListVue from '@/components/TodoList.vue';
+import { mapGetters, mapMutations, mapState } from 'vuex';
 
 export default {
   name: "Todo-Component",
@@ -16,47 +17,51 @@ export default {
   data() {
     return {
       todoText: "",
-      todos: [],
-      todoToBeEdited: {},
-      indexToBeEdited: -1,
-      isEditMode: false
     };
   },
+  computed: {
+    ...mapGetters([
+      'todos',
+    ]),
+    ...mapState([
+      'isEditMode',
+      'activeTodo'
+    ]),
+  },
   methods: {
-    addTodo() {
+    ...mapMutations([
+      'addTodo',
+      'editTodo',
+      'changeIsEditStateFalse',
+      'setActiveTodo'
+    ]),
+    setText(text) {
+      this.todoText = text
+    },
+    setTodoTextMethod() {
+      this.setTodoText(this.todoText)
+    },
+    addTodoMethod() {
       if (this.isEditMode) {
-        this.todoToBeEdited.message = this.todoText
-        this.todos.splice(this.indexToBeEdited, 1, this.todoToBeEdited)
-        this.todoToBeEdited = {}
-        this.indexToBeEdited = -1
-        this.isEditMode = false
-        this.todoText = ""
+        this.setActiveTodo({
+          id: this.activeTodo.id,
+          isCompleted: this.activeTodo.isCompleted,
+          message: this.todoText,
+        })
+        this.editTodo(this.activeTodo)
+        this.changeIsEditStateFalse()
+        this.todoText = ''
         return
       }
-      this.todos.push({
+      const payload = {
         id: Math.floor(Math.random() * 10000) + 1,
         message: this.todoText,
         isCompleted: false
-      })
+      }
+      this.addTodo(payload)
       this.todoText = ""
     },
-    editTodo(index){
-      this.todoToBeEdited = this.todos[index]
-      this.indexToBeEdited = index
-      this.isEditMode = true
-      this.todoText = this.todoToBeEdited.message
-    },
-    deleteTodo (id) {
-      const indexOfItem = this.todos.findIndex(todo => todo.id === id) 
-      if (indexOfItem !== -1) {
-        this.todos.splice(indexOfItem, 1)
-      }
-    },
-    buttonClicked(data) {
-      console.log("I have been clicked")
-      console.log(data)
-    }
-  }
+  },
 };
 </script>
 

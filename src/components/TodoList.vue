@@ -1,6 +1,6 @@
 <template>
   <div>
-    <todo-item-vue @edit-clicked="$emit('edit-click', index)" @delete-clicked="$emit('delete-click', todo.id)" v-for="(todo, index) in todos" :key="todo.id" :todo="todo"/>
+    <todo-item-vue @edit-clicked="emitText" v-for="todo in todos" :key="todo.id" :todo="todo"/>
   </div>
 </template>
 
@@ -16,6 +16,11 @@ export default {
             type: Array,
             default: []
         }
+    },
+    methods: {
+      emitText(text) {
+        this.$emit('edit', text)
+      }
     }
 }
 </script>
